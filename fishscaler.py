@@ -13,7 +13,7 @@ Tropical Island,Revised,2
 And go pull the prices for those cards from online stores. Output another CSV.
 
 Name,Set,Quantity,Price,Total
-Tropical Island,Revised,2,200,210,199,214,205.75,411.50
+Tropical Island,Revised,2,200,400
 """
 
 
