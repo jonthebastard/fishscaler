@@ -2,9 +2,9 @@
 Python utility for bulk capture of pricing data from mtggoldfish.com. Python 3 is (maybe) required, but might run on 2.7 - I haven't tested it. 
 
 ## Installation
-`git clone https://github.com/blitzcrg/fishscaler`
-`cd fishscaler`
-`pip3 install -r requirements.txt`
+```git clone https://github.com/blitzcrg/fishscaler
+cd fishscaler
+pip3 install -r requirements.txt```
 
 ## Usage
 Accepts two positional arguments - an input file and an output file. The input file must be a CSV formatted like
