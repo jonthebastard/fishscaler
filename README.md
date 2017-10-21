@@ -10,6 +10,7 @@ Python utility for bulk capture of pricing data from mtggoldfish.com. Python 3 i
 Accepts two positional arguments - an input file and an output file. The input file must be a CSV formatted like
 
 `Name,Set,Quantity`
+
 `Tropical Island,Revised Edition,2`
 
 The output file will be a CSV with the same format plus two additional columns: Price, and Total. 
