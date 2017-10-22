@@ -44,15 +44,20 @@ def getprice_mtggoldfish(cardname, setname):
     """
     uri = "https://www.mtggoldfish.com/price/{}/{}#paper"
 
-    cardname = cardname.replace('\'', '').replace(' ', '+')
-    setname = setname.replace('\'', '').replace(' ', '+')
+    cardname = cardname.replace("’", "").replace(",", "").replace(" ", "+")
+    setname = setname.replace("’", "").replace(",", "").replace(" ", "+")
+
+    print(cardname, setname)
 
     page = requests.get(uri.format(setname, cardname))
 
     soup = bs4.BeautifulSoup(page.text, 'html.parser')
 
-    price = soup.find(class_='price-box paper').contents[3].text
-
+    try:
+        price = soup.find(class_='price-box paper').contents[3].text
+    except:
+        price = 0
+        return price
     return price
 
 
@@ -66,7 +71,6 @@ def build_collection(inventory):
     inventory[0].append('Price')
     inventory[0].append('Total')
     for line in islice(inventory, 1, None):
-        print(line[0], line[1])
         price = getprice_mtggoldfish(line[0], line[1])
         line.append(str(price))
         line.append(str(float(price) * float(line[2])))
