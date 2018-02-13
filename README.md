@@ -14,7 +14,7 @@ pip3 install -r requirements.txt
 Accepts two positional arguments - an input file and an output file. The input file MUST be a CSV formatted like:
 
 ```
-Name,Set,Quantity`
+Name,Set,Quantity
 Tropical Island,Revised Edition,2
 ```
 
