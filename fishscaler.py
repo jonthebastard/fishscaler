@@ -4,6 +4,7 @@ import requests
 import bs4
 import csv
 import argparse
+import re
 from itertools import islice
 """
 Load a CSV of Magic cards formatted like
@@ -16,6 +17,14 @@ Name,Set,Quantity,Price,Total
 Tropical Island,Revised,2,200,400
 """
 
+def clean_name(name):
+    name = re.sub("[',:)]", "", name)
+    name = re.sub("[ .]", "+", name).replace("++","+")
+    if name.count("(") == 1 :
+        name = name.replace("(", "-")
+    elif name.count("(") > 1 :
+        name = name.replace("(", "", (name.count("(")-1)).replace("(", "+-")
+    return name.replace("+-","-")
 
 def load_csv(path):
     """
@@ -42,10 +51,11 @@ def getprice_mtggoldfish(cardname, setname):
     Output: price - float
             error - string
     """
-    uri = "https://www.mtggoldfish.com/price/{}/{}#paper"
+    uri = "http://www.mtggoldfish.com/price/{}/{}#paper"
 
-    cardname = cardname.replace("’", "").replace(",", "").replace(" ", "+")
-    setname = setname.replace("’", "").replace(",", "").replace(" ", "+")
+    cardname = clean_name(cardname)
+
+    setname = clean_name(setname)
 
     print(cardname, setname)
 
@@ -58,10 +68,10 @@ def getprice_mtggoldfish(cardname, setname):
     except:
         price = 0
         return price
-    return price
+    return price[2:].replace(",","")
 
 
-def build_collection(inventory):
+def build_collection(inventory, outpath):
     """
     Build go get price data and format it.
 
@@ -70,26 +80,14 @@ def build_collection(inventory):
     """
     inventory[0].append('Price')
     inventory[0].append('Total')
-    for line in islice(inventory, 1, None):
-        price = getprice_mtggoldfish(line[0], line[1])
-        line.append(str(price))
-        line.append(str(float(price) * float(line[2])))
-
-    return inventory
-
-
-def write_csv(inventory, outpath):
-    """
-    Write the csv file.
-
-    Inputs: inventory - list of cards and prices
-            outpath - destination file to write
-
-    Output: none
-    """
     with open(outpath, 'w') as outfile:
         writer = csv.writer(outfile)
-        writer.writerows(inventory)
+        for line in islice(inventory, 1, None):
+            price = getprice_mtggoldfish(line[0], line[1])
+            line.append(str(price))
+            line.append(str("{:.2f}".format(float(price) * float(line[2]))))
+            writer.writerow(line)
+    """return inventory"""
 
 
 def msg(name=None):
@@ -121,7 +119,7 @@ def main():
     """Parse arguments and perform price checks."""
     parser = initargparser()
     args = parser.parse_args()
-    write_csv(build_collection(load_csv(args.infile)), args.outfile)
+    build_collection(load_csv(args.infile), args.outfile)
 
 
 if __name__ == '__main__':
